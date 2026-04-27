@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vinyl Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Vinyl<span>Shop</span></div>
+        <div class="nav-links">
+            <a href="index.html">Головна</a>
+            <a href="#catalog_nav">Каталог</a>
+            <a href="genres.html">Жанри</a>
+            <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span id="cart-count">Кошик</span></a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Знайди свій грув</h1>
+        <p>Пошук за артистом, лейблом або навіть BPM</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="'Techno', '128 BPM' або 'Bicep'...">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+
+    <main>
+        <section class="recommendations">
+            <h2>Рекомендовано для вас</h2>
+            <p class="subtitle">На основі трендів та схожих стилів</p>
+            <div class="product-grid" id="recommendationGrid">
+                </div>
+        </section>
+
+        <section class="catalog" id="catalog_nav">
+            <h2>Всі платівки</h2>
+            <div class="product-grid" id="productGrid">
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Vinyl Shop</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

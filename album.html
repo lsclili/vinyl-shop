@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Деталі альбому</title>
+    </head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4;">
+
+    <header style="padding: 20px; background: black; color: white; display: flex; justify-content: space-between;">
+        <a href="index.html" style="color: white; text-decoration: none;"><h4>Повернутися до покупок</h4></a>
+        <a href="cart.html" style="color: white; text-decoration: none;"><h4>🛒 Кошик</h4></a>
+    </header>
+
+    <main id="album-container" style="max-width: 800px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <p>Завантаження...</p>
+    </main>
+    <section id="recommendations-container" style="max-width: 800px; margin: 0 auto 50px auto;">
+    </section>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const albumId = parseInt(urlParams.get('id'));
+
+        async function loadAlbumDetails() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/records');
+                const allRecords = await response.json();
+                const album = allRecords.find(item => item.id === albumId);
+                const container = document.getElementById('album-container');
+                const recContainer = document.getElementById('recommendations-container');
+                
+                if (album) {
+                    container.innerHTML = `
+                        <div style="display: flex; gap: 30px;">
+                            <img src="${album.image_url}" style="width: 300px; height: 300px; object-fit: cover; border-radius: 5px;">
+                            <div>
+                                <span style="background: #eee; padding: 5px 10px; border-radius: 20px; font-size: 0.9em;">${album.genre}</span>
+                                <h1 style="margin-top: 10px;">${album.title}</h1>
+                                <h2 style="color: #666; font-weight: normal;">${album.artist}</h2>
+                                <h2 style="margin: 20px 0; color: #e60000;">$${album.price}</h2>
+                                <p style="line-height: 1.6; color: #444;">Це класичний реліз, який стане чудовим доповненням до будь-якої колекції вінілу. Насолоджуйтесь теплим аналоговим звучанням.</p>
+                                
+                                <button onclick="addToCartAndRedirect(${album.id}, '${album.title}', ${album.price}, '${album.image_url}')" 
+                                        style="padding: 15px 30px; background: black; color: white; border: none; font-size: 1.1em; cursor: pointer; border-radius: 5px; margin-top: 20px;">
+                                    Додати в кошик
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    let recommended = allRecords.filter(item => item.genre === album.genre && item.id !== albumId);
+                    recommended = recommended.slice(0, 3);
+
+                    if (recommended.length > 0) {
+                        let recHTML = `
+                            <h2 style="margin-bottom: 20px; font-size: 1.5em;">Схожі релізи (${album.genre})</h2>
+                            <div style="display: flex; gap: 20px;">
+                        `;
+                        recommended.forEach(rec => {
+                            recHTML += `
+                                <a href="album.html?id=${rec.id}" style="flex: 1; text-decoration: none; color: inherit; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s;">
+                                    <img src="${rec.image_url}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0 0 5px 0; font-size: 1.1em;">${rec.title}</h4>
+                                    <p style="margin: 0; color: #666; font-size: 0.9em;">${rec.artist}</p>
+                                    <p style="margin: 10px 0 0 0; font-weight: bold; color: #e60000;">$${rec.price}</p>
+                                </a>
+                            `;
+                        });
+
+                        recHTML += `</div>`;
+                        recContainer.innerHTML = recHTML;
+                    }
+
+                } else {
+                    container.innerHTML = "<h2>Альбом не знайдено</h2>";
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+            }
+        }
+        function addToCartAndRedirect(id, title, price, image_url) {
+            let cart = JSON.parse(localStorage.getItem('vinylCart')) || [];
+            const existing = cart.find(item => item.id === id);
+            
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ id, title, price, image_url, quantity: 1 });
+            }
+            
+            localStorage.setItem('vinylCart', JSON.stringify(cart));
+            window.location.href = 'cart.html';
+        }
+
+        loadAlbumDetails();
+    </script>
+</body>
+</html>

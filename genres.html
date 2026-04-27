@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Жанри - Vinyl Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4; }
+        .navbar {display: flex;justify-content: space-between;align-items: center;padding: 20px 5%;background-color: #1e1e1e;position: sticky;top: 0;z-index: 100;}
+        .logo {font-size: 24px;font-weight: bold;color: #ffffff;}
+        .logo span { color: #f36a98; }
+        .nav-links a {color: #ffffff; text-decoration: none;margin-left: 20px;transition: 0.3s;}
+        .nav-links a:hover { color: #f36a98; }
+        .genre-section { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .genre-title { border-bottom: 2px solid #1e1e1e; padding-bottom: 10px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 50px;
+        }
+
+        .record-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.3s; text-decoration: none; color: inherit; }
+        .record-card:hover { transform: translateY(-5px); }
+        .card-img { width: 100%; height: 200px; background-size: cover; background-position: center; }
+        .card-info { padding: 15px; }
+        .card-info h4 { margin: 0; font-size: 1.1em; }
+        .card-info p { margin: 5px 0 0; color: #666; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Vinyl<span>Shop</span></div>
+        <div class="nav-links">
+            <a href="index.html">Головна</a>
+            <a href="index.html">Каталог</a>
+            <a href="genres.html">Жанри</a>
+            <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i> <span id="cart-count">Кошик</span></a>
+        </div>
+    </nav>
+    <main id="genres-container">
+        <p style="text-align: center; margin-top: 50px;">Завантаження...</p>
+    </main>
+
+    <script>
+        async function loadGenres() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/records');
+                const allRecords = await response.json();
+                const container = document.getElementById('genres-container');
+                container.innerHTML = '';
+                const genres = [...new Set(allRecords.map(item => item.genre))].sort();
+
+                genres.forEach(genreName => {
+                    const section = document.createElement('section');
+                    section.className = 'genre-section';
+                    const genreRecords = allRecords.filter(r => r.genre === genreName);
+
+                    let recordsHTML = '';
+                    genreRecords.forEach(rec => {
+                        recordsHTML += `
+                            <a href="album.html?id=${rec.id}" class="record-card">
+                                <div class="card-img" style="background-image: url('${rec.image_url}')"></div>
+                                <div class="card-info">
+                                    <h4>${rec.title}</h4>
+                                    <p>${rec.artist}</p>
+                                    <p><strong>$${rec.price}</strong></p>
+                                </div>
+                            </a>
+                        `;
+                    });
+
+                    section.innerHTML = `
+                        <h2 class="genre-title">${genreName || 'Різне'}</h2>
+                        <div class="products-grid">${recordsHTML}</div>
+                    `;
+                    
+                    container.appendChild(section);
+                });
+            } catch (error) {
+                console.error('Помилка:', error);
+                document.getElementById('genres-container').innerHTML = "<p style='text-align:center;'>Не вдалося підключитися до сервера.</p>";
+            }
+        }
+
+        window.onload = loadGenres;
+    </script>
+</body>
+</html>
