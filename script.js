@@ -72,30 +72,41 @@ const catalogSection = document.querySelector('.catalog');
 const recSection = document.querySelector('.recommendations');
 
 if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase().trim();
-        const filteredProducts = allRecords.filter(item => {
-            return (
-                item.title.toLowerCase().includes(searchTerm) ||
-                item.artist.toLowerCase().includes(searchTerm) ||
-                (item.genre && item.genre.toLowerCase().includes(searchTerm))
-            );
-        });
+    let timeout = null;
 
-        renderProducts(filteredProducts);
-        if (catalogSection && recSection) {
-            if (searchTerm !== "") {
-                catalogSection.style.order = "-1";
-                if (filteredProducts.length === 0) {
-                    recSection.style.display = "none";
-                } else {
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        const searchTerm = e.target.value.trim();
+
+        timeout = setTimeout(async () => {
+            if (searchTerm === "") {
+                renderProducts(allRecords);
+                if (catalogSection && recSection) {
+                    catalogSection.style.order = "0";
                     recSection.style.display = "block";
                 }
-            } else {
-                catalogSection.style.order = "0";
-                recSection.style.display = "block"; 
+                return;
             }
-        }
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/search?q=${encodeURIComponent(searchTerm)}`);
+                const searchResults = await response.json();
+
+                renderProducts(searchResults);
+                
+                if (catalogSection && recSection) {
+                    catalogSection.style.order = "-1";
+                    if (searchResults.length === 0) {
+                        recSection.style.display = "none";
+                    } else {
+                        recSection.style.display = "block";
+                    }
+                }
+            } catch (error) {
+                console.error('Помилка розумного пошуку:', error);
+                grid.innerHTML = "<p>Помилка пошуку. Перевірте з'єднання з сервером.</p>";
+            }
+        }, 400); 
     });
 }
 

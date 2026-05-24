@@ -3,13 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Мій Кошик</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: #1e1e1e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #ffffff;
+            margin-right: 40px;
+        }
+        .logo span { color: #f36a98; }
+        
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+        .nav-links a:hover { color: #f36a98; }
+
+        .back-link {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: #ffffff; }
+    </style>
 </head>
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4;">
 
-    <header style="padding: 20px; background: black; color: white; display: flex; justify-content: space-between;">
-        <a href="index.html" style="color: white; text-decoration: none;"><h4>Повернутися до покупок</h4></a>
-        <h4>Ваш кошик</h4>
-    </header>
+    <nav class="navbar">
+        <div style="display: flex; align-items: center;">
+            <a href="index.html" class="logo">Vinyl<span>Shop</span></a>
+            <a href="index.html" class="back-link">Повернутися до покупок</a>
+        </div>
+        <div class="nav-links">
+            <span style="color: #ffffff; font-size: 16px; font-weight: bold;"><i class="fas fa-shopping-cart"></i> Ваш кошик</span>
+        </div>
+    </nav>
 
     <main style="max-width: 800px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         <div id="cart-container"></div>
